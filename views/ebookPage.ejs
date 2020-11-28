@@ -4,7 +4,7 @@
 <body>
 
 	<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" style="background-color: rgba(255, 255, 255, 0.85);">
-		  <a class="navbar-brand mb-0 h1" href="/">BookEx</a>
+		  <a class="navbar-brand mb-0 h1 logo" href="/"><img src="/images/Logo (2).png" width="32px" height="32px" class="d-inline-block align-top" alt="BookEx"> BookEx</a>
 		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		  </button>
@@ -27,8 +27,8 @@
 							<div class="form-group row col-lg-3 tag" style="visibility: hidden; height: 0px; margin: 0;">
 								<label for="exampleFormControlSelect1">Tag</label>
 								<select name="tag" class="form-control  form-control-sm tag2" id="exampleFormControlSelect1" style="margin: 0 auto;">
-								  <option value="cn" <%if(branch === "cn") {%>selected<%}%>>College Notes</option>
-								  <option value="pyq" <%if(branch === "pyq") {%>selected<%}%>>Previous Year Papers</option>
+								  <option value="cn" <%if(tag === "cn") {%>selected<%}%>>College Notes</option>
+								  <option value="pyq" <%if(tag === "pyq") {%>selected<%}%>>Previous Year Papers</option>
 								  <option value="oth"  <%if(tag === "oth" || tag === "" || tag == null) {%>selected<%}%>>Others</option>
 								</select>
 							</div>
@@ -96,8 +96,8 @@
 			<div class="form-group row col-lg-4 tag">
 				<label for="exampleFormControlSelect1">Tag</label>
 				<select name="tag" class="form-control  form-control-sm tag2" id="exampleFormControlSelect1" style="margin: 0 auto;background-color:#EAE8FF;">
-				  <option value="cn" <%if(branch === "cn") {%>selected<%}%>>College Notes</option>
-				  <option value="pyq" <%if(branch === "pyq") {%>selected<%}%>>Previous Year Papers</option>
+				  <option value="cn" <% if(tag === "cn") {%>selected<%}%>>College Notes</option>
+				  <option value="pyq" <%if(tag === "pyq") {%>selected<%}%>>Previous Year Papers</option>
 				  <option value="oth"  <%if(tag === "oth" || tag === "" || tag == null) {%>selected<%}%>>Others</option>
 				</select>
 			</div>
