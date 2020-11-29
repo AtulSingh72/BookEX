@@ -3,6 +3,8 @@ package com.beatmockerz.bookex;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 myWebView.loadUrl(myWebView.getUrl());
             }
         });
-        FloatingActionButton fab = findViewById(R.id.fab);
+        final FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,6 +67,37 @@ public class MainActivity extends AppCompatActivity {
                         myWebView.getScrollY(), 0);
                 anim.setDuration(400);
                 anim.start();
+            }
+        });
+        final float[] current_visibility = {0f};
+        myWebView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                Log.i("Scrolled", "+++ scrollchanged "+myWebView.getScrollY());
+                if(myWebView.getScrollY() >= 248 && current_visibility[0] == 0f) {
+                    ObjectAnimator anim = ObjectAnimator.ofFloat(fab, "alpha",
+                            current_visibility[0], 1f);
+                    fab.setVisibility(View.VISIBLE);
+                    anim.setDuration(200);
+                    anim.start();
+                    current_visibility[0] = 1f;
+                    fab.setVisibility(View.VISIBLE);
+                }
+                else if(myWebView.getScrollY() < 248 && current_visibility[0] == 1f) {
+                    ObjectAnimator anim = ObjectAnimator.ofFloat(fab, "alpha",
+                            current_visibility[0], 0f);
+
+                    anim.setDuration(200);
+                    anim.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            fab.setVisibility(View.GONE);
+                        }
+                    });
+                    anim.start();
+                    current_visibility[0] = 0f;
+                }
             }
         });
         Log.i("Height: ", String.valueOf(myWebView.getHeight()));
