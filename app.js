@@ -505,8 +505,9 @@ app.post('/books', upload.single('image'), function(req,res){
 app.get('/books/:id', function(req, res){
 	var booksData = Book.findById(req.params.id);
 	booksData.populate('ratings').exec(function(err, data){
-		if(err) {
+		if(err) {	
 			console.log(err);
+			res.redirect('/error');
 		} else {
 			if(data.ratings.length > 0) {
               var ratings = [];
@@ -559,7 +560,7 @@ app.get('/books/:id/edit', function(req, res){
 app.put("/books/:id", upload.single('image'), function(req, res){
     Book.findById(req.params.id, async function(err, book){
         if(err){
-            console.log(err);
+			console.log(err);
         } else {
             if (req.file) {
               try {
@@ -1545,6 +1546,7 @@ app.get('/ebooks/:id', function(req, res){
 	EbooksData.populate('ratings').exec(function(err, data){
 		if(err) {
 			console.log(err);
+			res.redirect('/error');
 		} else {
 			if(data.ratings.length > 0) {
               var ratings = [];
@@ -2001,7 +2003,10 @@ app.post('/misc', upload.single('image'), function(req, res){
 app.get('/misc/:id', function(req, res){
 	var miscData = Misc.findById(req.params.id);
 	miscData.populate('ratings').exec(function(err, data){
-		if(err) console.log(err);
+		if (err) {
+			console.log(err);
+			res.redirect('/error');
+		}
 		else {
 			if(data.ratings.length > 0) {
 				var ratings = [];
@@ -2289,6 +2294,10 @@ app.post('/feed', function(req, res){
 		if(err) console.log(err);
 		else res.redirect('/about-us');
 	})
+});
+
+app.get('/*', function (req, res) {
+	res.render('errorPage');
 });
 
 //====== END OF ROUTES =====
