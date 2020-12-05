@@ -137,7 +137,7 @@
 	<% } else { %>
 	
 	<div class="card-deck" style="margin: 100px 10px;">
-    <% records.forEach(function(row){ if(currentUser == null || row.uploader != currentUser.username) {%>
+    <% records.forEach(function(row){ if((currentUser == null || row.uploader != currentUser.username) && (row.is_display == true)) {%>
     <div class="col-lg-3 col-md-6" style="margin-bottom: 75px;">
   <div class="card books" style="
     border: 1.5px solid rgba(0, 0, 0, 0.25);
