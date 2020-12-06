@@ -93,15 +93,16 @@
     <!-- End of Navbar -->
     <!-- Adding extra margin -->
     <p style="margin: 8%"></p>
+    <% if(book == null) { %>
     <p style="text-align: center">
         <img src="/images/notfound.png" style="width: 60%" />
     </p>
-    <% if(book == null) { %> <p style="
-                text-align: center;
-                color: #6c63ff;
-                font-size: 3rem;
-                font-family: cursive;
-            ">
+    <p style="
+            text-align: center;
+            color: #6c63ff;
+            font-size: 3rem;
+            font-family: cursive;
+        ">
         E-Book seems to be deleted.
     </p><% } else { %>
     <div class="row row_mobile">
