@@ -2056,37 +2056,56 @@ app.post("/ebooks", pdfupload.single("pdf_file"), async function (req, res) {
     });
 });
 
-app.get("/ebooks/:id", function (req, res) {
+app.get("/ebooks/:id", async function (req, res) {
     var EbooksData = Ebook.findById(req.params.id);
-    EbooksData.populate("ratings").exec(function (err, data) {
+    EbooksData.populate("ratings").exec(async function (err, data) {
         if (err) {
             console.log(err);
             res.redirect("/error");
         } else {
-            if (data.ratings.length > 0) {
-                var ratings = [];
-                var length = data.ratings.length;
-                data.ratings.forEach(function (rating) {
-                    ratings.push(rating.rating);
-                });
-                var rating = ratings.reduce(function (total, element) {
-                    return total + element;
-                });
-                if (!data.rating) data.rating = 0;
-                data.rating = rating / length;
-                data.save();
-            }
-            if (req.isAuthenticated()) {
-                User.findById(req.user._id, function (err, user) {
-                    if (err) console.log(err);
-                    res.render("ebookDetail", {
-                        book: data,
-                        show: true,
-                        seen: user.seen,
+            // validating existance of PDF
+            let response = await fetch(
+                "https://lh3.googleusercontent.com/d/" +
+                    data.file_id +
+                    "=s450?authuser=0"
+            );
+            let responseCode = response.status;
+            if (responseCode == 404) {
+                // Delete E-Book
+                data.ratings.forEach(function (rate) {
+                    Rating.findById(rate._id, function (err, rated) {
+                        rated.remove();
                     });
                 });
+                data.remove();
+                res.render("ebookDetail", { book: null, show: false });
             } else {
-                res.render("ebookDetail", { book: data, show: false });
+                // Show E-Book
+                if (data.ratings.length > 0) {
+                    var ratings = [];
+                    var length = data.ratings.length;
+                    data.ratings.forEach(function (rating) {
+                        ratings.push(rating.rating);
+                    });
+                    var rating = ratings.reduce(function (total, element) {
+                        return total + element;
+                    });
+                    if (!data.rating) data.rating = 0;
+                    data.rating = rating / length;
+                    data.save();
+                }
+                if (req.isAuthenticated()) {
+                    User.findById(req.user._id, function (err, user) {
+                        if (err) console.log(err);
+                        res.render("ebookDetail", {
+                            book: data,
+                            show: true,
+                            seen: user.seen,
+                        });
+                    });
+                } else {
+                    res.render("ebookDetail", { book: data, show: false });
+                }
             }
             // res.render('ebookDetail', {book: data});
         }
