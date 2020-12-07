@@ -1,3 +1,4 @@
+const { remove } = require("./models/Comment");
 const feedback = require("./models/feedback");
 
 //=====REQUIRE STATEMENTS======
@@ -908,6 +909,56 @@ app.delete("/secretkitab04848/:id/feed", function (req, res) {
     Feed.findById(req.params.id, function (err, feed) {
         feed.remove();
         res.redirect("/secretkitab04848");
+    });
+});
+// Delete errored E-Book Route
+app.get("/secretkitab04848auto", async function (req, res) {
+    Ebook.find({}, async function (err, ebooks) {
+        if (err) res.send(err);
+        let defected = [];
+        let location = [];
+        let not_defected = [];
+
+        for (var i = 0; i < ebooks.length; i++) {
+            let response = await fetch(
+                "https://lh3.googleusercontent.com/d/" +
+                    ebooks[i].file_id +
+                    "=s450?authuser=0"
+            );
+            let responseCode = response.status;
+            if (responseCode == 404) {
+                // damaged E-Book
+                defected.push(ebooks[i]);
+                location.push(i);
+            } else {
+                // E-Book all good!
+                not_defected.push(ebooks[i]);
+            }
+        }
+
+        // delete defected
+        let removed = 0;
+        defected.forEach(function (ebook) {
+            ebook.ratings.forEach(function (rating_id) {
+                Rating.findById(rating_id, function (err, rated) {
+                    if (err) console.log(err);
+                    rated.remove();
+                });
+            });
+            ebook.remove();
+            ebook.save();
+            removed += 1;
+        });
+
+        let JSON_Response = {
+            "total count": ebooks.length,
+            "defected count": defected.length,
+            "not defected count": not_defected.length,
+            "successfully deleted": removed,
+            "defected ebooks": defected,
+            "all ebooks": ebooks,
+        };
+        res.json(JSON_Response);
     });
 });
 
