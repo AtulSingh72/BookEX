@@ -3,155 +3,206 @@
 <!-- Navbar Begins -->
 
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand mb-0 h1 logo" href="/"><img src="/images/Logo (2).png" width="32px" height="32px"
+                class="d-inline-block align-top" alt="BookEx" />
+            BookEx</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-		  <a class="navbar-brand mb-0 h1 logo" href="/"><img src="/images/Logo (2).png" width="32px" height="32px" class="d-inline-block align-top" alt="BookEx"> BookEx</a>
-		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		  </button>
-
-		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-			  <ul class="navbar-nav mr-auto">
-				  <li class="nav-item my-auto"><a class="nav-link" href="/" style="margin: 0 10px;">Home</a></li>
-				  <li class="nav-item my-auto"><a class="nav-link" href="/books" style="margin: 0 10px;">Books</a></li>
-				  <li class="nav-item my-auto active"><a class="nav-link" href="/ebooks" style="margin: 0 10px;">E-Books/PDFs</a></li>
-				  <li class="nav-item my-auto"><a class="nav-link" href="/misc" style="margin: 0 10px;">Miscellaneous</a></li>
-				  <li class="nav-item my-auto"><a class="nav-link" href="/books/new" style="margin: 0 10px;">Lend Items</a></li>
-				  <% if(currentUser != null) {%>
-				  <li class="nav-item my-auto"><a class="nav-link" href="/mybooks" style="margin: 0 10px;">My Books</a></li>
-				  <% } %>
-			  </ul>
-			<ul class="navbar-nav ml-auto">
-				<li class="nav-item">
-					<form class="form-inline my-2 my-lg-0" action="/ebooks" method="GET">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon1"><i class="fa fa-search"></i></span>
-							</div>
-							<input type="text" name="search" class="form-control" placeholder="Search Books...">
-						</div>
-						<button class="btn btn-info my-2 my-sm-0" style="margin: 0 10px;">Search</button>
-					</form>
-				</li>
-				<% if (!currentUser) { %>
-				<li class="nav-item">
-					<form class="form-inline my-2 my-lg-0" action="/signup" method="GET">
-						<button class="btn btn-outline-info my-2 my-sm-0" style="margin: 0 10px;">Login</button>
-					</form>
-				</li> 
-				<% } else { %>
-				<li class="nav-item">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item my-auto">
+                    <a class="nav-link" href="/" style="margin: 0 10px">Home</a>
+                </li>
+                <li class="nav-item my-auto">
+                    <a class="nav-link" href="/books" style="margin: 0 10px">Books</a>
+                </li>
+                <li class="nav-item my-auto active">
+                    <a class="nav-link" href="/ebooks" style="margin: 0 10px">E-Books/PDFs</a>
+                </li>
+                <li class="nav-item my-auto">
+                    <a class="nav-link" href="/misc" style="margin: 0 10px">Miscellaneous</a>
+                </li>
+                <li class="nav-item my-auto">
+                    <a class="nav-link" href="/books/new" style="margin: 0 10px">Lend Items</a>
+                </li>
+                <% if(currentUser != null) {%>
+                <li class="nav-item my-auto">
+                    <a class="nav-link" href="/mybooks" style="margin: 0 10px">My Books</a>
+                </li>
+                <% } %>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <form class="form-inline my-2 my-lg-0" action="/ebooks" method="GET">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fa fa-search"></i></span>
+                            </div>
+                            <input type="text" name="search" class="form-control" placeholder="Search Books..." />
+                        </div>
+                        <button class="btn btn-info my-2 my-sm-0" style="margin: 0 10px">
+                            Search
+                        </button>
+                    </form>
+                </li>
+                <% if (!currentUser) { %>
+                <li class="nav-item">
+                    <form class="form-inline my-2 my-lg-0" action="/signup" method="GET">
+                        <button class="btn btn-outline-info my-2 my-sm-0" style="margin: 0 10px">
+                            Login
+                        </button>
+                    </form>
+                </li>
+                <% } else { %>
+                <li class="nav-item">
                     <% if(show) { console.log(seen); if(seen) { %>
                     <a href="/notif"><i class="far fa-bell btn-lg"></i></a>
                     <% } else { %>
-                    <a href="/notif"><i class="fas fa-bell btn-lg" style=" background-color: blue; color: white; "></i></a>
+                    <a href="/notif"><i class="fas fa-bell btn-lg" style="background-color: blue; color: white"></i></a>
                     <% } } %>
                 </li>
-				<li class="nav-item" style="text-align: center;">
-					<span class="my-2 my-lg-0 mx-4">Logged in as:</span>
-					<br>
-					<span class="my-2 my-lg-0 mx-4"><%= currentUser.firstname %> <%= currentUser.lastname %></span>
-				</li>
-				<li class="nav-item my-auto" style="text-align: center;color:white;font-size: 24px;">
-					<a class="my-2 my-lg-0 mx-4" style="color: black;background-color: transparent;border: 0;" href="/<%= currentUser._id.toString() %>/cart"><i class="fa fa-shopping-cart"></i></a>
-				</li>
-				<li class="nav-item">
-					<form class="form-inline my-2 my-lg-0" action="/signout" method="GET">
-						<button class="btn btn-outline-danger my-2 my-sm-0" style="margin: 0 10px;">Logout</button>
-					</form>
-				</li>
-				<% } %>
-			</ul>
-			
-		  </div>
-		</nav>
+                <li class="nav-item" style="text-align: center">
+                    <span class="my-2 my-lg-0 mx-4">Logged in as:</span>
+                    <br />
+                    <span class="my-2 my-lg-0 mx-4"><%= currentUser.firstname %> <%= currentUser.lastname
+                        %></span>
+                </li>
+                <li class="nav-item my-auto" style="text-align: center; color: white; font-size: 24px">
+                    <a class="my-2 my-lg-0 mx-4" style="
+                            color: black;
+                            background-color: transparent;
+                            border: 0;
+                        " href="/<%= currentUser._id.toString() %>/cart"><i class="fa fa-shopping-cart"></i></a>
+                </li>
+                <li class="nav-item">
+                    <form class="form-inline my-2 my-lg-0" action="/signout" method="GET">
+                        <button class="btn btn-outline-danger my-2 my-sm-0" style="margin: 0 10px">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+                <% } %>
+            </ul>
+        </div>
+    </nav>
 
-<!-- End of Navbar -->
-<!-- Adding extra margin -->
-	<p style="margin:8%"> </p>
-	
-	
-	<div class="row row_mobile">
-		<%if(currentUser != null) {%>
-		<div class="col-lg-6" style="text-align:center; margin-bottom: 50px;">
-			<iframe class="iframe_mb" src="https://drive.google.com/file/d/<%= book.file_id %>/preview" width height style="width: inherit; "></iframe>
-		</div>
-		<% } else { %>
-		<div class="col-lg-6" style="overflow-y: hidden; text-align:center; margin-bottom: 50px; pointer-events: none; touch-action: none;">
-			<img src="https://lh3.googleusercontent.com/d/<%= book.file_id %>=s450?authuser=0" alt="..." class="img-thumbnail">
-			<p>
-				<i class="fa fa-exclamation-triangle" style="color:red;"></i> Please Login to be able to view this file completely.
-			</p>
-		</div>
-		<% } %>
-		<div class="col-lg-6">
-			<h1 style="text-align:center;">
-				<%= book.title %>
-			</h1>
-			<h6 style="text-align:center;">By: <%= book.author %></h6>
-			<hr>
-			<p><%= book.description %></p>
+    <!-- End of Navbar -->
+    <!-- Adding extra margin -->
+    <p style="margin: 8%"></p>
+    <% if(book == null) { %>
+    <p style="text-align: center">
+        <img src="/images/notfound.png" style="width: 60%" />
+    </p>
+    <p style="
+            text-align: center;
+            color: #6c63ff;
+            font-size: 3rem;
+            font-family: cursive;
+        ">
+        E-Book seems to be deleted.
+    </p><% } else { %>
+    <div class="row row_mobile">
+        <%if(currentUser != null) {%>
+        <div class="col-lg-6" style="text-align: center; margin-bottom: 50px">
+            <iframe class="iframe_mb" src="https://drive.google.com/file/d/<%= book.file_id %>/preview" width height
+                style="width: inherit"></iframe>
+        </div>
+        <% } else { %>
+        <div class="col-lg-6" style="
+                overflow-y: hidden;
+                text-align: center;
+                margin-bottom: 50px;
+                pointer-events: none;
+                touch-action: none;
+            ">
+            <img src="https://lh3.googleusercontent.com/d/<%= book.file_id %>=s450?authuser=0" alt="..."
+                class="img-thumbnail" />
+            <p>
+                <i class="fa fa-exclamation-triangle" style="color: red"></i>
+                Please Login to be able to view this file completely.
+            </p>
+        </div>
+        <% } %>
+        <div class="col-lg-6">
+            <h1 style="text-align: center"><%= book.title %></h1>
+            <h6 style="text-align: center">By: <%= book.author %></h6>
+            <hr />
+            <p><%= book.description %></p>
 
-			<% if(currentUser !=null) { if(currentUser.username == book.uploader || currentUser.username == 'kitabbuddy1234@gmail.com') { %>
-				<div style="text-align: right">
-					<form action="/ebooks/<%= book._id %>/edit" method="GET"  style="display: inline-block">
-						<button type="submit" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i> Edit</button>
-					</form>
-					<form action="/ebooks/<%= book._id %>?_method=DELETE" method="POST" style="display: inline-block">
-						<button type="submit" class="btn btn-sm btn-danger" style="margin-right:10px;"><i class="fa fa-trash"></i> Delete</button>
-					</form>
-				</div>
-			<% }} %>
+            <% if(currentUser !=null) { if(currentUser.username == book.uploader
+            || currentUser.username == 'bookexexpert@gmail.com') { %>
+            <div style="text-align: right">
+                <form action="/ebooks/<%= book._id %>/edit" method="GET" style="display: inline-block">
+                    <button type="submit" class="btn btn-sm btn-warning">
+                        <i class="fa fa-edit"></i> Edit
+                    </button>
+                </form>
+                <form action="/ebooks/<%= book._id %>?_method=DELETE" method="POST" style="display: inline-block">
+                    <button type="submit" class="btn btn-sm btn-danger" style="margin-right: 10px">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+            <% }} %>
 
-			<br>
-			<br>
-			<hr>
-			<% if(currentUser!=null) { if(currentUser.username != book.uploader) {%>
-				<div class = "login-btn-left">
-					<a href='/ebooks/<%= book._id %>/comment' class="btn btn-outline-warning">Rate this book</a>
-				</div>
-				<div class = "login-btn-right">
-					<a href='http://drive.google.com/uc?id=<%= book.file_id %>&export=download' class="btn btn-outline-info" target="_blank">Download Now!</a>
-				</div>
-				<div class = "login-btn-right">
-					<a href='https://drive.google.com/file/d/<%= book.file_id %>' class="btn btn-outline-success" target="_blank">Open in new tab</a>
-				</div>
-			<% }} else { %>
-				<div class = "login-btn-left">
-					<a href='/signin' class="btn btn-outline-warning">Login to Rate this book</a>
-				</div>
-				<div class = "login-btn-right">
-					<a href='/signin' class="btn btn-outline-success">Login to Download</a>
-				</div>
-			<% } %>
-			<br>
-			<% if(book.ratings.length == 0) { %>
-			<% } else { %>
-				<h3 style="margin:40px auto 10px; text-align: center;">
-					Average Rating: <%= book.rating %>/<span style="font-size: 15px">5</span>
-				</h3>
-				<p style="text-align: center;">
-					<i>Total Ratings: <%= book.ratings.length %></i>
-				</p>
-				<div class="container" style="
-			border: 1px dotted;
-			border-radius: 7px;
-			padding: 10px;
-			margin: 30px 0;
-		">
-					<h3 style="text-align:center">
-						Comments
-					</h3>
-					<% book.ratings.forEach(function(rating){ %>
-					<hr>
-						<h6 style="display: inline-block; "><%= rating.firstname %> <%= rating.lastname %></h6>
-						<p class = "rating-comment" style="font-size:13px">Rating: <%= rating.rating %></p>
-						<p style="padding: 0 45px; font-size:13px;">
-							<%= rating.text %>
-						</p>
-					<% }) %>
-				</div>
-			<% } %>
-		</div>
-	</div>
-<% include partials/footer %>
+            <br />
+            <br />
+            <hr />
+            <% if(currentUser!=null) { if(currentUser.username != book.uploader)
+            {%>
+            <div class="login-btn-left">
+                <a href="/ebooks/<%= book._id %>/comment" class="btn btn-outline-warning">Rate this book</a>
+            </div>
+            <div class="login-btn-right">
+                <a href="http://drive.google.com/uc?id=<%= book.file_id %>&export=download" class="btn btn-outline-info"
+                    target="_blank">Download Now!</a>
+            </div>
+            <div class="login-btn-right">
+                <a href="https://drive.google.com/file/d/<%= book.file_id %>" class="btn btn-outline-success"
+                    target="_blank">Open in new tab</a>
+            </div>
+            <% }} else { %>
+            <div class="login-btn-left">
+                <a href="/signin" class="btn btn-outline-warning">Login to Rate this book</a>
+            </div>
+            <div class="login-btn-right">
+                <a href="/signin" class="btn btn-outline-success">Login to Download</a>
+            </div>
+            <% } %>
+            <br />
+            <% if(book.ratings.length == 0) { %> <% } else { %>
+            <h3 style="margin: 40px auto 10px; text-align: center">
+                Average Rating: <%= book.rating %>/<span style="font-size: 15px">5</span>
+            </h3>
+            <p style="text-align: center">
+                <i>Total Ratings: <%= book.ratings.length %></i>
+            </p>
+            <div class="container" style="
+                    border: 1px dotted;
+                    border-radius: 7px;
+                    padding: 10px;
+                    margin: 30px 0;
+                ">
+                <h3 style="text-align: center">Comments</h3>
+                <% book.ratings.forEach(function(rating){ %>
+                <hr />
+                <h6 style="display: inline-block">
+                    <%= rating.firstname %> <%= rating.lastname %>
+                </h6>
+                <p class="rating-comment" style="font-size: 13px">
+                    Rating: <%= rating.rating %>
+                </p>
+                <p style="padding: 0 45px; font-size: 13px">
+                    <%= rating.text %>
+                </p>
+                <% }) %>
+            </div>
+            <% } %>
+        </div>
+    </div>
+    <% } %>
+    <% include partials/footer %>
