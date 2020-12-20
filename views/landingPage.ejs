@@ -1,9 +1,7 @@
 <% include partials/header %>
 
 <body id="bg">
-    <img
-        src="https://images.wallpaperscraft.com/image/books_library_shelves_138556_1920x1080.jpg"
-        style="
+    <img src="https://images.wallpaperscraft.com/image/books_library_shelves_138556_1920x1080.jpg" style="
             background-repeat: no-repeat;
             position: fixed;
             top: 0;
@@ -14,30 +12,15 @@
             background-position: center;
             background-attachment: fixed;
             filter: brightness(0.85);
-        "
-    />
+        " />
     <!-- Navbar Begins -->
 
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top navigation">
-        <a class="navbar-brand mb-0 h1 logo" href="/"
-            ><img
-                src="/images/Logo (2).png"
-                width="32px"
-                height="32px"
-                class="d-inline-block align-top"
-                alt="BookEx"
-            />
-            BookEx</a
-        >
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-        >
+        <a class="navbar-brand mb-0 h1 logo" href="/"><img src="/images/Logo (2).png" width="32px" height="32px"
+                class="d-inline-block align-top" alt="BookEx" />
+            BookEx</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -47,45 +30,28 @@
                     <a class="nav-link" href="/" style="margin: 0 10px">Home</a>
                 </li>
                 <li class="nav-item my-auto">
-                    <a class="nav-link" href="/books" style="margin: 0 10px"
-                        >Books</a
-                    >
+                    <a class="nav-link" href="/books" style="margin: 0 10px">Books</a>
                 </li>
                 <li class="nav-item my-auto">
-                    <a class="nav-link" href="/ebooks" style="margin: 0 10px"
-                        >E-Books/PDFs</a
-                    >
+                    <a class="nav-link" href="/ebooks" style="margin: 0 10px">E-Books/PDFs</a>
                 </li>
                 <li class="nav-item my-auto">
-                    <a class="nav-link" href="/misc" style="margin: 0 10px"
-                        >Miscellaneous</a
-                    >
+                    <a class="nav-link" href="/misc" style="margin: 0 10px">Miscellaneous</a>
                 </li>
                 <li class="nav-item my-auto">
-                    <a class="nav-link" href="/books/new" style="margin: 0 10px"
-                        >Lend Items</a
-                    >
+                    <a class="nav-link" href="/books/new" style="margin: 0 10px">Lend Items</a>
                 </li>
                 <% if(currentUser != null) {%>
                 <li class="nav-item my-auto">
-                    <a class="nav-link" href="/mybooks" style="margin: 0 10px"
-                        >My Books</a
-                    >
+                    <a class="nav-link" href="/mybooks" style="margin: 0 10px">My Books</a>
                 </li>
                 <% } %>
             </ul>
             <ul class="navbar-nav ml-auto">
                 <% if (!currentUser) { %>
                 <li class="nav-item">
-                    <form
-                        class="form-inline my-2 my-lg-0"
-                        action="/signup"
-                        method="GET"
-                    >
-                        <button
-                            class="btn btn-outline-info my-2 my-sm-0"
-                            style="margin: 0 10px"
-                        >
+                    <form class="form-inline my-2 my-lg-0" action="/signup" method="GET">
+                        <button class="btn btn-outline-info my-2 my-sm-0" style="margin: 0 10px">
                             Login
                         </button>
                     </form>
@@ -95,49 +61,25 @@
                     <% if(show) { console.log(seen); if(seen) { %>
                     <a href="/notif"><i class="far fa-bell btn-lg"></i></a>
                     <% } else { %>
-                    <a href="/notif"
-                        ><i
-                            class="fas fa-bell btn-lg"
-                            style="background-color: blue; color: white"
-                        ></i
-                    ></a>
+                    <a href="/notif"><i class="fas fa-bell btn-lg" style="background-color: blue; color: white"></i></a>
                     <% } } %>
                 </li>
                 <li class="nav-item" style="text-align: center">
-                    <span class="my-2 my-lg-0 mx-4" style="color: white"
-                        >Logged in as:</span
-                    >
+                    <span class="my-2 my-lg-0 mx-4" style="color: white">Logged in as:</span>
                     <br />
-                    <span class="my-2 my-lg-0 mx-4" style="color: white"
-                        ><%= currentUser.firstname %> <%= currentUser.lastname
-                        %></span
-                    >
+                    <span class="my-2 my-lg-0 mx-4" style="color: white"><%= currentUser.firstname %> <%= currentUser.lastname
+                        %></span>
                 </li>
-                <li
-                    class="nav-item my-auto"
-                    style="text-align: center; color: white; font-size: 24px"
-                >
-                    <a
-                        class="my-2 my-lg-0 mx-4"
-                        style="
+                <li class="nav-item my-auto" style="text-align: center; color: white; font-size: 24px">
+                    <a class="my-2 my-lg-0 mx-4" style="
                             color: white;
                             background-color: transparent;
                             border: 0;
-                        "
-                        href="/<%= currentUser._id.toString() %>/cart"
-                        ><i class="fa fa-shopping-cart"></i
-                    ></a>
+                        " href="/<%= currentUser._id.toString() %>/cart"><i class="fa fa-shopping-cart"></i></a>
                 </li>
                 <li class="nav-item">
-                    <form
-                        class="form-inline my-2 my-lg-0"
-                        action="/signout"
-                        method="GET"
-                    >
-                        <button
-                            class="btn btn-outline-danger my-2 my-sm-0"
-                            style="margin: 0 10px"
-                        >
+                    <form class="form-inline my-2 my-lg-0" action="/signout" method="GET">
+                        <button class="btn btn-outline-danger my-2 my-sm-0" style="margin: 0 10px">
                             Logout
                         </button>
                     </form>
@@ -168,19 +110,16 @@
             <div class="col-lg-3 my-2">
                 <div class="card profile-card-2">
                     <div class="card-img-block">
-                        <img
-                            class="img-fluid"
+                        <img class="img-fluid"
                             src="https://images.pexels.com/photos/1148399/pexels-photo-1148399.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-                            alt="Card image cap"
-                            style="
+                            alt="Card image cap" style="
                                 width: 150px;
                                 height: 150px;
                                 border-radius: 50%;
                                 display: block;
                                 margin: 15px auto 0;
                                 object-fit: cover;
-                            "
-                        />
+                            " />
                     </div>
                     <div class="card-body pt-5">
                         <h5 class="card-title" style="text-align: center">
@@ -189,18 +128,13 @@
                         <p class="card-text">
                             Get the books you want at a much lower price than
                             their market price.<br /><strong
-                                style="text-align: center; display: block"
-                                >How?</strong
-                            >Simple, you buy the books which are being provided
+                                style="text-align: center; display: block">How?</strong>Simple, you buy the books which
+                            are being provided
                             to you by other peoples who don't need those books
                             now.<strong> What are you waiting for!</strong>
                         </p>
                         <div style="text-align: center">
-                            <a
-                                href="/books"
-                                class="btn btn-primary stretched-link"
-                                >Start Buying Now!</a
-                            >
+                            <a href="/books" class="btn btn-primary stretched-link">Start Buying Now!</a>
                         </div>
                     </div>
                 </div>
@@ -208,19 +142,16 @@
             <div class="col-lg-3 my-2">
                 <div class="card profile-card-2" style="">
                     <div class="card-img-block">
-                        <img
-                            class="img-fluid"
+                        <img class="img-fluid"
                             src="https://writenonfictionnow.com/wp-content/uploads/2013/01/Ebooks-flying-out-of-computer-Stuart-Miles-freedigital.jpg"
-                            alt="Card image cap"
-                            style="
+                            alt="Card image cap" style="
                                 width: 150px;
                                 height: 150px;
                                 border-radius: 50%;
                                 display: block;
                                 margin: 15px auto 0;
                                 object-fit: cover;
-                            "
-                        />
+                            " />
                     </div>
                     <div class="card-body pt-5">
                         <h5 class="card-title" style="text-align: center">
@@ -235,11 +166,7 @@
                             others may also be helped.
                         </p>
                         <div style="text-align: center">
-                            <a
-                                href="/ebooks"
-                                class="btn btn-primary stretched-link"
-                                >Start Downloading Now!</a
-                            >
+                            <a href="/ebooks" class="btn btn-primary stretched-link">Start Downloading Now!</a>
                         </div>
                     </div>
                 </div>
@@ -247,19 +174,15 @@
             <div class="col-lg-3 my-2">
                 <div class="card profile-card-2" style="">
                     <div class="card-img-block">
-                        <img
-                            class="img-fluid"
-                            src="https://live.staticflickr.com/4132/5199904522_034f3f8b0a_c.jpg"
-                            alt="Card image cap"
-                            style="
+                        <img class="img-fluid" src="https://live.staticflickr.com/4132/5199904522_034f3f8b0a_c.jpg"
+                            alt="Card image cap" style="
                                 width: 150px;
                                 height: 150px;
                                 border-radius: 50%;
                                 display: block;
                                 margin: 15px auto 0;
                                 object-fit: cover;
-                            "
-                        />
+                            " />
                     </div>
                     <div class="card-body pt-5">
                         <h5 class="card-title" style="text-align: center">
@@ -274,11 +197,7 @@
                             else.
                         </p>
                         <div style="text-align: center">
-                            <a
-                                href="/misc"
-                                class="btn btn-primary stretched-link"
-                                >Start Buying Now!</a
-                            >
+                            <a href="/misc" class="btn btn-primary stretched-link">Start Buying Now!</a>
                         </div>
                     </div>
                 </div>
@@ -286,19 +205,16 @@
             <div class="col-lg-3 my-2">
                 <div class="card profile-card-2">
                     <div class="card-img-block">
-                        <img
-                            class="img-fluid"
+                        <img class="img-fluid"
                             src="https://townsquare.media/site/103/files/2014/04/84010602-630x450.jpg?w=980&q=75"
-                            alt="Card image cap"
-                            style="
+                            alt="Card image cap" style="
                                 width: 150px;
                                 height: 150px;
                                 border-radius: 50%;
                                 display: block;
                                 margin: 15px auto 0;
                                 object-fit: cover;
-                            "
-                        />
+                            " />
                     </div>
                     <div class="card-body pt-5">
                         <h5 class="card-title" style="text-align: center">
@@ -312,11 +228,7 @@
                             need.<strong>So, what are you waiting for!</strong>
                         </p>
                         <div style="text-align: center">
-                            <a
-                                href="/books/new"
-                                class="btn btn-warning stretched-link"
-                                >Lend Books/Items Now!</a
-                            >
+                            <a href="/books/new" class="btn btn-warning stretched-link">Lend Books/Items Now!</a>
                         </div>
                     </div>
                 </div>
@@ -326,19 +238,16 @@
             <div class="col-lg-4 my-2" style="margin: auto">
                 <div class="card profile-card-2" style="">
                     <div class="card-img-block">
-                        <img
-                            class="img-fluid"
+                        <img class="img-fluid"
                             src="https://i.pinimg.com/originals/a3/1b/1d/a31b1d35380af24948f54b42346225f6.png"
-                            alt="Card image cap"
-                            style="
+                            alt="Card image cap" style="
                                 width: 150px;
                                 height: 150px;
                                 border-radius: 50%;
                                 display: block;
                                 margin: 15px auto 0;
                                 object-fit: cover;
-                            "
-                        />
+                            " />
                     </div>
                     <div class="card-body pt-5">
                         <h5 class="card-title">About Us</h5>
@@ -349,11 +258,7 @@
                             share your views about our website.
                         </p>
                         <div style="text-align: center">
-                            <a
-                                href="/about-us"
-                                class="btn btn-info stretched-link"
-                                >More About Us</a
-                            >
+                            <a href="/about-us" class="btn btn-info stretched-link">More About Us</a>
                         </div>
                     </div>
                 </div>
@@ -362,39 +267,24 @@
     </div>
 
     <!-- Downloads Section -->
-    <footer
-        style="
+    <footer style="
             position: relative;
             z-index: 10;
             background-color: rgba(0, 0, 0, 0.5);
             text-align: center;
             color: white;
             font-weight: 500;
-        "
-    >
+        ">
         Try other versions also: <br class="mobile-br" />
-        <a
-            class="btn btn-sm"
-            style="background-color: #0078d7; margin: 10px 15px; color: white"
-            href="http://drive.google.com/uc?id=1dgreRV6tq10zrsl6GmWL9BIxXcHddw75&export=download"
-            target="_blank"
-        >
+        <a class="btn btn-sm" style="background-color: #0078d7; margin: 10px 15px; color: white"
+            href="http://drive.google.com/uc?id=1dgreRV6tq10zrsl6GmWL9BIxXcHddw75&export=download" target="_blank">
             <i class="fab fa-windows"></i> &nbsp; Windows
         </a>
-        <a
-            class="btn btn-sm"
-            style="background-color: #a4c639; margin: 10px 15px; color: black"
-            href="http://drive.google.com/uc?id=1fNMN5F24Ire6TrH1CPM4kTaxIklOw6Ew&export=download"
-            target="_blank"
-        >
+        <a class="btn btn-sm" style="background-color: #a4c639; margin: 10px 15px; color: black"
+            href="http://drive.google.com/uc?id=1fNMN5F24Ire6TrH1CPM4kTaxIklOw6Ew&export=download" target="_blank">
             <i class="fab fa-android"></i> &nbsp; Android
         </a>
     </footer>
-
-    <style>
-        var bg = document.getElementById('bg');
-        bg.
-    </style>
 
     <% include partials/footer %>
 </body>
