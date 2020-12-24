@@ -33,6 +33,7 @@ var express = require("express"),
     Misc = require("./models/Misc"),
     notif = require("./models/notif"),
     Feed = require("./models/feedback"),
+    Report = require("./models/Report"),
     async = require("async");
 mongoose.connect(
     "mongodb+srv://BookEx:7230429adi@cluster0.fcnj1.mongodb.net/ualu_app?retryWrites=true&w=majority",
@@ -749,8 +750,9 @@ app.delete("/books/:id", function (req, res) {
 });
 
 // Secret Routes
-app.get("/secretkitab04848", async function (req, res) {
+app.get("/secretkitab04848", isLoggedIn, async function (req, res) {
     //Show all data from database
+    if (req.user.username != "bookexexpert@gmail.com") res.redirect("/");
     Book.find({}, function (err, booksData) {
         if (err) console.log(err);
         Ebook.find({}, function (err, ebooksData) {
@@ -761,18 +763,27 @@ app.get("/secretkitab04848", async function (req, res) {
                     if (err) console.log(err);
                     User.find({}, function (err, usersData) {
                         if (err) console.log(err);
-                        User.findById(req.user._id, function (err, user) {
-                            if (err) console.log(err);
-                            res.render("secretMainPage", {
-                                books: booksData,
-                                ebooks: ebooksData,
-                                misc: miscData,
-                                feeds: feedbackData,
-                                users: usersData,
-                                show: true,
-                                seen: user.seen,
+                        var Repo = Report.find({});
+                        Repo.populate("object")
+                            .populate("reporter")
+                            .exec(function (err, report) {
+                                User.findById(
+                                    req.user._id,
+                                    function (err, user) {
+                                        if (err) console.log(err);
+                                        res.render("secretMainPage", {
+                                            books: booksData,
+                                            ebooks: ebooksData,
+                                            misc: miscData,
+                                            feeds: feedbackData,
+                                            users: usersData,
+                                            show: true,
+                                            seen: user.seen,
+                                            report: report,
+                                        });
+                                    }
+                                );
                             });
-                        });
                     });
                 });
             });
@@ -3036,6 +3047,90 @@ app.post("/feed", function (req, res) {
     });
 });
 
+// Report Routes
+app.get("/books/:id/report", isLoggedIn, function (req, res) {
+    User.findById(req.user._id, function (err, user) {
+        res.render("reportPage", {
+            bookid: req.params.id,
+            booktype: "books",
+            seen: user.seen,
+            show: true,
+        });
+    });
+});
+
+app.delete("/report/:id/delete", function (req, res) {
+    Report.findById(req.params.id, function (err, report) {
+        report.remove();
+        res.redirect("/secretkitab04848");
+    });
+});
+
+app.post("/books/:id/report", isLoggedIn, function (req, res) {
+    User.findById(req.user._id, function (err, user) {
+        Book.findById(req.params.id, function (err, book) {
+            req.body.report.object_model = "Book";
+            req.body.report.object = book;
+            req.body.report.reporter = user;
+            Report.create(req.body.report, function (err, report) {
+                if (err) console.log(err);
+                else res.redirect("/books/" + book._id.toString());
+            });
+        });
+    });
+});
+
+app.get("/ebooks/:id/report", isLoggedIn, function (req, res) {
+    User.findById(req.user._id, function (err, user) {
+        res.render("reportPage", {
+            bookid: req.params.id,
+            booktype: "ebooks",
+            seen: user.seen,
+            show: true,
+        });
+    });
+});
+
+app.post("/ebooks/:id/report", isLoggedIn, function (req, res) {
+    User.findById(req.user._id, function (err, user) {
+        Ebook.findById(req.params.id, function (err, book) {
+            req.body.report.object_model = "EBook";
+            req.body.report.object = book;
+            req.body.report.reporter = user;
+            Report.create(req.body.report, function (err, report) {
+                if (err) console.log(err);
+                else res.redirect("/ebooks/" + book._id.toString());
+            });
+        });
+    });
+});
+
+app.get("/misc/:id/report", isLoggedIn, function (req, res) {
+    User.findById(req.user._id, function (err, user) {
+        res.render("reportPage", {
+            bookid: req.params.id,
+            booktype: "misc",
+            seen: user.seen,
+            show: true,
+        });
+    });
+});
+
+app.post("/misc/:id/report", isLoggedIn, function (req, res) {
+    User.findById(req.user._id, function (err, user) {
+        Misc.findById(req.params.id, function (err, book) {
+            req.body.report.object_model = "Misc";
+            req.body.report.object = book;
+            req.body.report.reporter = user;
+            Report.create(req.body.report, function (err, report) {
+                if (err) console.log(err);
+                else res.redirect("/misc/" + book._id.toString());
+            });
+        });
+    });
+});
+
+// Error Page
 app.get("/*", function (req, res) {
     res.render("errorPage");
 });

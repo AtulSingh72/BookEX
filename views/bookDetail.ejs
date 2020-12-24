@@ -206,6 +206,13 @@
             {%>
             <div class="login-btn-left">
                 <a
+                    href="/books/<%= book._id %>/report"
+                    class="btn btn-outline-danger"
+                    >Report</a
+                >
+            </div>
+            <div class="login-btn-left">
+                <a
                     href="/books/<%= book._id %>/comment"
                     class="btn btn-outline-warning"
                     >Rate this book</a

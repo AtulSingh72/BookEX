@@ -25,8 +25,9 @@ passport.use(
             clientSecret: "M3uhkGt4D8RcBQNPUQ0vIROf",
             // Localhost
             // callbackURL: "http://localhost:8080/signup/google/callback",
-            // clientID:"421566432651-p7ta0j2b67os8liqrvku3vt4ejf5i5lp.apps.googleusercontent.com",
-            // clientSecret: "YXi_Xo-uF4pNVV_PZ3aBZkDr"
+            // clientID:
+            //     "421566432651-p7ta0j2b67os8liqrvku3vt4ejf5i5lp.apps.googleusercontent.com",
+            // clientSecret: "YXi_Xo-uF4pNVV_PZ3aBZkDr",
         },
         async function (accessToken, refreshToken, profile, done) {
             console.log(refreshToken);
