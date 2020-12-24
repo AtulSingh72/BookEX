@@ -1,5 +1,6 @@
 package com.beatmockerz.bookex;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -7,17 +8,29 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.DownloadManager;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.webkit.CookieManager;
+import android.webkit.DownloadListener;
+import android.webkit.URLUtil;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -30,6 +43,33 @@ public class MainActivity extends AppCompatActivity {
     WebView myWebView;
     ProgressBar progressBar;
     SwipeRefreshLayout finalMySwipeRefreshLayout1;
+    private ValueCallback<Uri> mUploadMessage;
+    public ValueCallback<Uri[]> uploadMessage;
+    public static final int REQUEST_SELECT_FILE = 100;
+    private final static int FILECHOOSER_RESULTCODE = 1;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (requestCode == REQUEST_SELECT_FILE) {
+                if (uploadMessage == null)
+                    return;
+                uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, intent));
+                uploadMessage = null;
+            }
+        } else if (requestCode == FILECHOOSER_RESULTCODE) {
+            if (null == mUploadMessage)
+                return;
+            // Use MainActivity.RESULT_OK if you're implementing WebView inside Fragment
+            // Use RESULT_OK only if you're implementing WebView inside an Activity
+            Uri result = intent == null || resultCode != MainActivity.RESULT_OK ? null : intent.getData();
+            mUploadMessage.onReceiveValue(result);
+            mUploadMessage = null;
+        } else
+            Toast.makeText(MainActivity.this.getApplicationContext(), "Failed to Upload!", Toast.LENGTH_LONG).show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +86,32 @@ public class MainActivity extends AppCompatActivity {
 
         myWebView.getSettings().setJavaScriptEnabled(true);
         final Activity activity = this;
+        WebSettings mWebSettings = myWebView.getSettings();
+        mWebSettings.setJavaScriptEnabled(true);
+        mWebSettings.setSupportZoom(false);
+        mWebSettings.setAllowFileAccess(true);
+        mWebSettings.setAllowContentAccess(true);
         myWebView.loadUrl("http://book-exchnge.herokuapp.com");
+        myWebView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+
+                request.setMimeType(mimetype);
+                //------------------------COOKIE!!------------------------
+                String cookies = CookieManager.getInstance().getCookie(url);
+                request.addRequestHeader("cookie", cookies);
+                //------------------------COOKIE!!------------------------
+                request.addRequestHeader("User-Agent", userAgent);
+                request.setDescription("Downloading file...");
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, contentDisposition, mimetype));
+                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                dm.enqueue(request);
+                Toast.makeText(getApplicationContext(), "Downloading File", Toast.LENGTH_LONG).show();
+            }
+        });
         finalMySwipeRefreshLayout1 = findViewById(R.id.swiperefresh);
         finalMySwipeRefreshLayout1.setColorSchemeResources(
                 R.color.colorPrimaryDark);
@@ -108,6 +173,31 @@ public class MainActivity extends AppCompatActivity {
         public void onProgressChanged(WebView view, int newProgress) {
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(newProgress);
+        }
+
+        @Override
+        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+            if (uploadMessage != null) {
+                uploadMessage.onReceiveValue(null);
+                uploadMessage = null;
+            }
+
+            uploadMessage = filePathCallback;
+
+            Intent intent = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                intent = fileChooserParams.createIntent();
+            }
+            try
+            {
+                startActivityForResult(intent, REQUEST_SELECT_FILE);
+            } catch (ActivityNotFoundException e)
+            {
+                uploadMessage = null;
+                Toast.makeText(MainActivity.this.getApplicationContext(), "Cannot Open File Chooser", Toast.LENGTH_LONG).show();
+                return false;
+            }
+            return true;
         }
     }
 
