@@ -51,7 +51,7 @@
                         >Lend Items</a
                     >
                 </li>
-                <% if(currentUser != null) {%>
+                <% if(currentUser !=null) {%>
                 <li class="nav-item my-auto">
                     <a class="nav-link" href="/mybooks" style="margin: 0 10px"
                         >My Books</a
@@ -60,33 +60,6 @@
                 <% } %>
             </ul>
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <form
-                        class="form-inline my-2 my-lg-0"
-                        action="/books"
-                        method="GET"
-                    >
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon1"
-                                    ><i class="fa fa-search"></i
-                                ></span>
-                            </div>
-                            <input
-                                type="text"
-                                name="search"
-                                class="form-control"
-                                placeholder="Search Books..."
-                            />
-                        </div>
-                        <button
-                            class="btn btn-info my-2 my-sm-0"
-                            style="margin: 0 10px"
-                        >
-                            Search
-                        </button>
-                    </form>
-                </li>
                 <% if (!currentUser) { %>
                 <li class="nav-item">
                     <form
@@ -118,10 +91,9 @@
                 <li class="nav-item" style="text-align: center">
                     <span class="my-2 my-lg-0 mx-4">Logged in as:</span>
                     <br />
-                    <span class="my-2 my-lg-0 mx-4"
-                        ><%= currentUser.firstname %> <%= currentUser.lastname
-                        %></span
-                    >
+                    <span class="my-2 my-lg-0 mx-4">
+                        <%= currentUser.firstname %> <%= currentUser.lastname %>
+                    </span>
                 </li>
                 <li
                     class="nav-item my-auto"
@@ -172,7 +144,7 @@
         <div class="col-lg-6">
             <h1 style="text-align: center"><%= book.title %></h1>
             <h6 style="text-align: center">By: <%= book.author %></h6>
-            <% if(book.price == 0) { %>
+            <% if(book.price==0) { %>
             <h3
                 style="
                     font-size: 32px;
@@ -192,14 +164,15 @@
                     color: #39c600;
                 "
             >
-                <i class="fa fa-inr"></i> <%= book.price %>
+                <i class="fa fa-inr"></i>
+                <%= book.price %>
             </h3>
             <% } %>
             <hr />
             <p><%= book.description %></p>
 
-            <% if(currentUser !=null) { if(currentUser.username == book.uploader
-            || currentUser.username == 'bookexexpert@gmail.com') { %>
+            <% if(currentUser !=null) { if(currentUser.username==book.uploader
+            || currentUser.username=='bookexexpert@gmail.com' ) { %>
             <div style="text-align: right">
                 <form
                     action="/books/<%= book._id %>/edit"
@@ -229,7 +202,7 @@
             <br />
             <br />
             <hr />
-            <% if(currentUser!=null) { if(currentUser.username != book.uploader)
+            <% if(currentUser!=null) { if(currentUser.username !=book.uploader)
             {%>
             <div class="login-btn-left">
                 <a
@@ -265,7 +238,7 @@
             </div>
             <% } %>
             <br />
-            <% if(book.ratings.length == 0) { %> <% } else { %>
+            <% if(book.ratings.length==0) { %> <% } else { %>
             <h3 style="margin: 40px auto 10px; text-align: center">
                 Average Rating: <%= book.rating.toFixed(2) %>/<span
                     style="font-size: 15px"
