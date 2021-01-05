@@ -2251,289 +2251,347 @@ app.get("/ebooks/:id/edit", function (req, res) {
 });
 
 app.put("/ebooks/:id", pdfupload.single("pdf_file"), async function (req, res) {
-    let tokenDetails = await fetch(
-        "https://accounts.google.com/o/oauth2/token",
-        {
-            method: "POST",
-            body: JSON.stringify({
-                // "client_id": "1040941249609-oscm85g83ueshgs930pvncpsdmdcif6e.apps.googleusercontent.com",
-                // "client_secret": "bcNyHqPiFtsXUpTDUwme213T",
-                client_id:
-                    "921117793019-6r4on28a2c1j8a6tf95ogmp82cpqi7jj.apps.googleusercontent.com",
-                client_secret: "M3uhkGt4D8RcBQNPUQ0vIROf",
-                refresh_token: req.user.refreshToken,
-                grant_type: "refresh_token",
-            }),
-        }
-    );
-    tokenDetails = await tokenDetails.json();
-    const accessToken = tokenDetails.access_token;
-
-    const oauth2Client = new google.auth.OAuth2();
-    oauth2Client.setCredentials({ access_token: accessToken });
-
-    const drive = google.drive({
-        version: "v3",
-        auth: oauth2Client,
-    });
-    let { filename, mimetype, path } = req.file;
-    let stream = require("stream");
-    let fileObject = req.file;
-    let bufferStream = new stream.PassThrough();
-    bufferStream.end(fileObject.buffer);
-
-    drive.files.delete({
-        fileId: fileId,
-    });
-
-    let folderId;
-    User.findById(req.user._id, function (err, user) {
-        folderId = user.folder_id;
-        var fs = require("fs");
-        fs.access(
-            "https://drive.google.com/drive/folders/" + folderId,
-            (err) => {
-                if (err) {
-                    user.folder_id = null;
-                    user.save();
-                }
+    if(req.file) {
+        var fileId = Ebook.findById(req.params.id, function (err, data) {
+            if (err) console.log(err);
+            else {
+                return data.file_id;
+            }
+        });
+        let tokenDetails = await fetch(
+            "https://accounts.google.com/o/oauth2/token",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    // "client_id": "1040941249609-oscm85g83ueshgs930pvncpsdmdcif6e.apps.googleusercontent.com",
+                    // "client_secret": "bcNyHqPiFtsXUpTDUwme213T",
+                    client_id:
+                        "921117793019-6r4on28a2c1j8a6tf95ogmp82cpqi7jj.apps.googleusercontent.com",
+                    client_secret: "M3uhkGt4D8RcBQNPUQ0vIROf",
+                    refresh_token: req.user.refreshToken,
+                    grant_type: "refresh_token",
+                }),
             }
         );
-        if (user.folder_id == null) {
-            var folderMetadata = {
-                name: "BookEx",
-                mimeType: "application/vnd.google-apps.folder",
-            };
-            drive.files.create(
-                {
-                    resource: folderMetadata,
-                    fields: "id",
-                },
-                function (err, folder) {
-                    if (err) console.log(err);
-                    else {
-                        User.findById(req.user._id, function (err, user) {
-                            user.folder_id = folder.data.id;
-                            user.save();
-                        });
-                        drive.files.create(
-                            {
-                                requestBody: {
-                                    name: filename,
-                                    mimeType: mimetype,
-                                    parents: [folder.data.id],
-                                    fields: "id",
-                                },
-                                media: {
-                                    mimeType: mimetype,
-                                    body: fs.createReadStream(path),
-                                },
-                            },
-                            function (err, file_uploaded) {
-                                if (err) console.log(err);
-                                else {
-                                    // change file permissions
-                                    var fileId = file_uploaded.data.id;
-                                    var permissions = [
-                                        {
-                                            type: "anyone",
-                                            role: "writer",
-                                        },
-                                    ];
-                                    // Using the NPM module 'async'
-                                    async.eachSeries(
-                                        permissions,
-                                        function (
-                                            permission,
-                                            permissionCallback
-                                        ) {
-                                            drive.permissions.create(
-                                                {
-                                                    resource: permission,
-                                                    fileId: fileId,
-                                                    fields: "id",
-                                                },
-                                                function (err, res) {
-                                                    if (err) {
-                                                        // Handle error...
-                                                        console.error(err);
-                                                        permissionCallback(err);
-                                                    } else {
-                                                        permissionCallback();
-                                                    }
-                                                }
-                                            );
-                                        },
-                                        function (err) {
-                                            if (err) {
-                                                // Handle error
-                                                console.error(err);
-                                            } else {
-                                                req.body.newBook.file_id = fileId;
-                                                req.body.newBook.uploader =
-                                                    req.user.username;
-                                                Ebook.create(
-                                                    req.body.newBook,
-                                                    function (err, ebook) {
-                                                        if (err)
-                                                            console.log(err);
-                                                        else {
-                                                            var message =
-                                                                "Hello there, hope you are having a good day. Thank you so much for lending your product. The details provided by you for the product is under verification and will be uploaded on the website once verified. Also, a mail will be sent to you notifying the verification.<br>Below are the details uploaded by you.<br><div class='container' style='border: 1px solid black ; margin:10% auto; border-radius:10px'><div class='row row_mobile_notif'><div class='col-lg-6' style='text-align:center; margin-bottom: 50px;'><iframe class='iframe_mb_notif' src='https://drive.google.com/file/d/" +
-                                                                ebook.file_id +
-                                                                "/preview' width height style='margin-bottom: 5px;'></iframe></div><div class='col-lg-6'>        <h1 style='text-align:center;'>" +
-                                                                ebook.title +
-                                                                "</h1><h6 style='text-align:center;'>By: " +
-                                                                ebook.author +
-                                                                "</h6><hr><p>" +
-                                                                ebook.description +
-                                                                "</p></div></div>";
-                                                            var new_notif = new notif(
-                                                                {
-                                                                    content: message,
-                                                                }
-                                                            );
-                                                            new_notif.save();
-                                                            User.findById(
-                                                                req.user._id,
-                                                                function (
-                                                                    err,
-                                                                    user
-                                                                ) {
-                                                                    if (err)
-                                                                        console.log(
-                                                                            err
-                                                                        );
-                                                                    else {
-                                                                        user.notification.push(
-                                                                            new_notif
-                                                                        );
-                                                                        user.seen = false;
-                                                                        user.save();
-                                                                        res.redirect(
-                                                                            "/ebooks/" +
-                                                                                ebook._id
-                                                                        );
-                                                                    }
-                                                                }
-                                                            );
-                                                            // res.redirect('/books');
-                                                        }
-                                                    }
-                                                );
-                                            }
-                                        }
-                                    );
-                                }
-                            }
-                        );
+        tokenDetails = await tokenDetails.json();
+        const accessToken = tokenDetails.access_token;
+    
+        const oauth2Client = new google.auth.OAuth2();
+        oauth2Client.setCredentials({ access_token: accessToken });
+    
+        const drive = google.drive({
+            version: "v3",
+            auth: oauth2Client,
+        });
+        let { filename, mimetype, path } = req.file;
+        let stream = require("stream");
+        let fileObject = req.file;
+        let bufferStream = new stream.PassThrough();
+        bufferStream.end(fileObject.buffer);
+    
+        drive.files.delete({
+            fileId: fileId,
+        });
+    
+        let folderId;
+        User.findById(req.user._id, function (err, user) {
+            folderId = user.folder_id;
+            var fs = require("fs");
+            fs.access(
+                "https://drive.google.com/drive/folders/" + folderId,
+                (err) => {
+                    if (err) {
+                        user.folder_id = null;
+                        user.save();
                     }
                 }
             );
-        } else {
-            drive.files.create(
-                {
-                    requestBody: {
-                        name: filename,
-                        mimeType: mimetype,
-                        parents: [user.folder_id],
+            if (user.folder_id == null) {
+                var folderMetadata = {
+                    name: "BookEx",
+                    mimeType: "application/vnd.google-apps.folder",
+                };
+                drive.files.create(
+                    {
+                        resource: folderMetadata,
                         fields: "id",
                     },
-                    media: {
-                        mimeType: mimetype,
-                        body: fs.createReadStream(path),
-                    },
-                },
-                function (err, file_uploaded) {
-                    if (err) console.log(err);
-                    else {
-                        // change file permissions
-                        var fileId = file_uploaded.data.id;
-                        var permissions = [
-                            {
-                                type: "anyone",
-                                role: "writer",
-                            },
-                        ];
-                        // Using the NPM module 'async'
-                        async.eachSeries(
-                            permissions,
-                            function (permission, permissionCallback) {
-                                drive.permissions.create(
-                                    {
-                                        resource: permission,
-                                        fileId: fileId,
+                    function (err, folder) {
+                        if (err) console.log(err);
+                        else {
+                            User.findById(req.user._id, function (err, user) {
+                                user.folder_id = folder.data.id;
+                                user.save();
+                            });
+                            drive.files.create(
+                                {
+                                    requestBody: {
+                                        name: filename,
+                                        mimeType: mimetype,
+                                        parents: [folder.data.id],
                                         fields: "id",
                                     },
-                                    function (err, res) {
-                                        if (err) {
-                                            // Handle error...
-                                            console.error(err);
-                                            permissionCallback(err);
-                                        } else {
-                                            permissionCallback();
-                                        }
-                                    }
-                                );
-                            },
-                            function (err) {
-                                if (err) {
-                                    // Handle error
-                                    console.error(err);
-                                } else {
-                                    // All permissions inserted
-                                    req.body.newBook.file_id = fileId;
-                                    req.body.newBook.uploader =
-                                        req.user.username;
-                                    Ebook.create(
-                                        req.body.newBook,
-                                        function (err, ebook) {
-                                            if (err) console.log(err);
-                                            else {
-                                                var message =
-                                                    "Hello there, hope you are having a good day. Thank you so much for lending your product. The details provided by you for the product is under verification and will be uploaded on the website once verified. Also, a mail will be sent to you notifying the verification.<br>Below are the details uploaded by you.<br><div class='container' style='border: 1px solid black ; margin:10% auto; border-radius:10px'><div class='row row_mobile_notif'><div class='col-lg-6' style='text-align:center; margin-bottom: 50px;'><iframe class='iframe_mb_notif' src='https://drive.google.com/file/d/" +
-                                                    ebook.file_id +
-                                                    "/preview' width height style='margin-bottom: 5px;'></iframe></div><div class='col-lg-6'>        <h1 style='text-align:center;'>" +
-                                                    ebook.title +
-                                                    "</h1><h6 style='text-align:center;'>By: " +
-                                                    ebook.author +
-                                                    "</h6><hr><p>" +
-                                                    ebook.description +
-                                                    "</p></div></div>";
-                                                var new_notif = new notif({
-                                                    content: message,
-                                                });
-                                                new_notif.save();
-                                                User.findById(
-                                                    req.user._id,
-                                                    function (err, user) {
-                                                        if (err)
-                                                            console.log(err);
-                                                        else {
-                                                            user.notification.push(
-                                                                new_notif
-                                                            );
-                                                            user.seen = false;
-                                                            user.save();
-                                                            res.redirect(
-                                                                "/ebooks/" +
-                                                                    ebook._id
-                                                            );
+                                    media: {
+                                        mimeType: mimetype,
+                                        body: fs.createReadStream(path),
+                                    },
+                                },
+                                function (err, file_uploaded) {
+                                    if (err) console.log(err);
+                                    else {
+                                        // change file permissions
+                                        var fileId = file_uploaded.data.id;
+                                        var permissions = [
+                                            {
+                                                type: "anyone",
+                                                role: "writer",
+                                            },
+                                        ];
+                                        // Using the NPM module 'async'
+                                        async.eachSeries(
+                                            permissions,
+                                            function (
+                                                permission,
+                                                permissionCallback
+                                            ) {
+                                                drive.permissions.create(
+                                                    {
+                                                        resource: permission,
+                                                        fileId: fileId,
+                                                        fields: "id",
+                                                    },
+                                                    function (err, res) {
+                                                        if (err) {
+                                                            // Handle error...
+                                                            console.error(err);
+                                                            permissionCallback(err);
+                                                        } else {
+                                                            permissionCallback();
                                                         }
                                                     }
                                                 );
-                                                // res.redirect('/books');
+                                            },
+                                            function (err) {
+                                                if (err) {
+                                                    // Handle error
+                                                    console.error(err);
+                                                } else {
+                                                    var newEbook = new Ebook();
+                                                    newEbook.title = req.body.title;
+                                                    newEbook.author = req.body.author;
+                                                    newEbook.is_display = false;
+                                                    newEbook.description = req.body.description;
+                                                    newEbook.file_id = fileId;
+                                                    Ebook.findByIdAndUpdate( req.params.id,
+                                                        newEbook,
+                                                        function (err, ebook) {
+                                                            if (err)
+                                                                console.log(err);
+                                                            else {
+                                                                var message =
+                                                                    "Hello there, hope you are having a good day. Thank you so much for lending your product. The details provided by you for the product is under verification and will be uploaded on the website once verified. Also, a mail will be sent to you notifying the verification.<br>Below are the details uploaded by you.<br><div class='container' style='border: 1px solid black ; margin:10% auto; border-radius:10px'><div class='row row_mobile_notif'><div class='col-lg-6' style='text-align:center; margin-bottom: 50px;'><iframe class='iframe_mb_notif' src='https://drive.google.com/file/d/" +
+                                                                    ebook.file_id +
+                                                                    "/preview' width height style='margin-bottom: 5px;'></iframe></div><div class='col-lg-6'>        <h1 style='text-align:center;'>" +
+                                                                    ebook.title +
+                                                                    "</h1><h6 style='text-align:center;'>By: " +
+                                                                    ebook.author +
+                                                                    "</h6><hr><p>" +
+                                                                    ebook.description +
+                                                                    "</p></div></div>";
+                                                                var new_notif = new notif(
+                                                                    {
+                                                                        content: message,
+                                                                    }
+                                                                );
+                                                                new_notif.save();
+                                                                User.findById(
+                                                                    req.user._id,
+                                                                    function (
+                                                                        err,
+                                                                        user
+                                                                    ) {
+                                                                        if (err)
+                                                                            console.log(
+                                                                                err
+                                                                            );
+                                                                        else {
+                                                                            user.notification.push(
+                                                                                new_notif
+                                                                            );
+                                                                            user.seen = false;
+                                                                            user.save();
+                                                                            res.redirect(
+                                                                                "/ebooks/" +
+                                                                                    ebook._id
+                                                                            );
+                                                                        }
+                                                                    }
+                                                                );
+                                                                // res.redirect('/books');
+                                                            }
+                                                        }
+                                                    );
+                                                }
+                                            }
+                                        );
+                                    }
+                                }
+                            );
+                        }
+                    }
+                );
+            } else {
+                drive.files.create(
+                    {
+                        requestBody: {
+                            name: filename,
+                            mimeType: mimetype,
+                            parents: [user.folder_id],
+                            fields: "id",
+                        },
+                        media: {
+                            mimeType: mimetype,
+                            body: fs.createReadStream(path),
+                        },
+                    },
+                    function (err, file_uploaded) {
+                        if (err) console.log(err);
+                        else {
+                            // change file permissions
+                            var fileId = file_uploaded.data.id;
+                            var permissions = [
+                                {
+                                    type: "anyone",
+                                    role: "writer",
+                                },
+                            ];
+                            // Using the NPM module 'async'
+                            async.eachSeries(
+                                permissions,
+                                function (permission, permissionCallback) {
+                                    drive.permissions.create(
+                                        {
+                                            resource: permission,
+                                            fileId: fileId,
+                                            fields: "id",
+                                        },
+                                        function (err, res) {
+                                            if (err) {
+                                                // Handle error...
+                                                console.error(err);
+                                                permissionCallback(err);
+                                            } else {
+                                                permissionCallback();
                                             }
                                         }
                                     );
+                                },
+                                function (err) {
+                                    if (err) {
+                                        // Handle error
+                                        console.error(err);
+                                    } else {
+                                        // All permissions inserted
+                                        var newEbook = new Ebook();
+                                        newEbook.title = req.body.title;
+                                        newEbook.author = req.body.author;
+                                        newEbook.is_display = false;
+                                        newEbook.description = req.body.description;
+                                        newEbook.file_id = fileId;
+                                        Ebook.findByIdAndUpdate( req.params.id,
+                                            newEbook,
+                                            function (err, ebook) {
+                                                if (err) console.log(err);
+                                                else {
+                                                    var message =
+                                                        "Hello there, hope you are having a good day. Thank you so much for lending your product. The details provided by you for the product is under verification and will be uploaded on the website once verified. Also, a mail will be sent to you notifying the verification.<br>Below are the details uploaded by you.<br><div class='container' style='border: 1px solid black ; margin:10% auto; border-radius:10px'><div class='row row_mobile_notif'><div class='col-lg-6' style='text-align:center; margin-bottom: 50px;'><iframe class='iframe_mb_notif' src='https://drive.google.com/file/d/" +
+                                                        ebook.file_id +
+                                                        "/preview' width height style='margin-bottom: 5px;'></iframe></div><div class='col-lg-6'>        <h1 style='text-align:center;'>" +
+                                                        ebook.title +
+                                                        "</h1><h6 style='text-align:center;'>By: " +
+                                                        ebook.author +
+                                                        "</h6><hr><p>" +
+                                                        ebook.description +
+                                                        "</p></div></div>";
+                                                    var new_notif = new notif({
+                                                        content: message,
+                                                    });
+                                                    new_notif.save();
+                                                    User.findById(
+                                                        req.user._id,
+                                                        function (err, user) {
+                                                            if (err)
+                                                                console.log(err);
+                                                            else {
+                                                                user.notification.push(
+                                                                    new_notif
+                                                                );
+                                                                user.seen = false;
+                                                                user.save();
+                                                                res.redirect(
+                                                                    "/ebooks/" +
+                                                                        ebook._id
+                                                                );
+                                                            }
+                                                        }
+                                                    );
+                                                    // res.redirect('/books');
+                                                }
+                                            }
+                                        );
+                                    }
                                 }
-                            }
-                        );
+                            );
+                        }
                     }
-                }
-            );
-        }
-    });
+                );
+            }
+        });
+    }
+    else {
+        var newEbook = new Ebook();
+        newEbook.title = req.body.title;
+        newEbook.author = req.body.author;
+        newEbook.is_display = false;
+        newEbook.description = req.body.description;
+        Ebook.findByIdAndUpdate( req.params.id, newEbook, function(err, ebook) {
+            if (err) console.log(err);
+            else {
+                var message =
+                    "Hello there, hope you are having a good day. Thank you so much for lending your product. The details provided by you for the product is under verification and will be uploaded on the website once verified. Also, a mail will be sent to you notifying the verification.<br>Below are the details uploaded by you.<br><div class='container' style='border: 1px solid black ; margin:10% auto; border-radius:10px'><div class='row row_mobile_notif'><div class='col-lg-6' style='text-align:center; margin-bottom: 50px;'><iframe class='iframe_mb_notif' src='https://drive.google.com/file/d/" +
+                    ebook.file_id +
+                    "/preview' width height style='margin-bottom: 5px;'></iframe></div><div class='col-lg-6'>        <h1 style='text-align:center;'>" +
+                    ebook.title +
+                    "</h1><h6 style='text-align:center;'>By: " +
+                    ebook.author +
+                    "</h6><hr><p>" +
+                    ebook.description +
+                    "</p></div></div>";
+                var new_notif = new notif({
+                    content: message,
+                });
+                new_notif.save();
+                User.findById(
+                    req.user._id,
+                    function (err, user) {
+                        if (err)
+                            console.log(err);
+                        else {
+                            user.notification.push(
+                                new_notif
+                            );
+                            user.seen = false;
+                            user.save();
+                            res.redirect(
+                                "/ebooks/" +
+                                    ebook._id
+                            );
+                        }
+                    }
+                );
+            }
+        });
+    }
 });
 
 // Ratings and Comments for Ebooks
