@@ -2376,17 +2376,16 @@ app.put("/ebooks/:id", pdfupload.single("pdf_file"), async function (req, res) {
                                                     // Handle error
                                                     console.error(err);
                                                 } else {
-                                                    req.newEbook.title = req.body.title;
-                                                    req.newEbook.author = req.body.author;
-                                                    req.newEbook.is_display = false;
-                                                    req.newEbook.description = req.body.description;
-                                                    req.newEbook.file_id = fileId;
-                                                    Ebook.findByIdAndUpdate( req.params.id,
-                                                        req.newEbook,
+                                                    Ebook.findById( req.params.id,
                                                         function (err, ebook) {
-                                                            if (err)
-                                                                console.log(err);
+                                                            if (err) console.log(err);
                                                             else {
+                                                                ebook.title = req.body.title;
+                                                                ebook.author = req.body.author;
+                                                                ebook.is_display = false;
+                                                                ebook.description = req.body.description;
+                                                                ebook.file_id = fileId;
+                                                                ebook.save();
                                                                 var message =
                                                                     "Hello there, hope you are having a good day. Thank you so much for lending your product. The details provided by you for the product is under verification and will be uploaded on the website once verified. Also, a mail will be sent to you notifying the verification.<br>Below are the details uploaded by you.<br><div class='container' style='border: 1px solid black ; margin:10% auto; border-radius:10px'><div class='row row_mobile_notif'><div class='col-lg-6' style='text-align:center; margin-bottom: 50px;'><iframe class='iframe_mb_notif' src='https://drive.google.com/file/d/" +
                                                                     ebook.file_id +
@@ -2491,16 +2490,16 @@ app.put("/ebooks/:id", pdfupload.single("pdf_file"), async function (req, res) {
                                         console.error(err);
                                     } else {
                                         // All permissions inserted
-                                        req.newEbook.title = req.body.title;
-                                        req.newEbook.author = req.body.author;
-                                        req.newEbook.is_display = false;
-                                        req.newEbook.description = req.body.description;
-                                        req.newEbook.file_id = fileId;
-                                        Ebook.findByIdAndUpdate( req.params.id,
-                                            req.newEbook,
+                                        Ebook.findById( req.params.id,
                                             function (err, ebook) {
                                                 if (err) console.log(err);
                                                 else {
+                                                    ebook.title = req.body.title;
+                                                    ebook.author = req.body.author;
+                                                    ebook.is_display = false;
+                                                    ebook.description = req.body.description;
+                                                    ebook.file_id = fileId;
+                                                    ebook.save();
                                                     var message =
                                                         "Hello there, hope you are having a good day. Thank you so much for lending your product. The details provided by you for the product is under verification and will be uploaded on the website once verified. Also, a mail will be sent to you notifying the verification.<br>Below are the details uploaded by you.<br><div class='container' style='border: 1px solid black ; margin:10% auto; border-radius:10px'><div class='row row_mobile_notif'><div class='col-lg-6' style='text-align:center; margin-bottom: 50px;'><iframe class='iframe_mb_notif' src='https://drive.google.com/file/d/" +
                                                         ebook.file_id +
@@ -2547,13 +2546,14 @@ app.put("/ebooks/:id", pdfupload.single("pdf_file"), async function (req, res) {
         });
     }
     else {
-        req.newEbook.title = req.body.title;
-        req.newEbook.author = req.body.author;
-        req.newEbook.is_display = false;
-        req.newEbook.description = req.body.description;
-        Ebook.findByIdAndUpdate( req.params.id, req.newEbook, function(err, ebook) {
+        Ebook.findById( req.params.id, function(err, ebook) {
             if (err) console.log(err);
             else {
+                ebook.title = req.body.title;
+                ebook.author = req.body.author;
+                ebook.is_display = false;
+                ebook.description = req.body.description;
+                ebook.save();
                 var message =
                     "Hello there, hope you are having a good day. Thank you so much for lending your product. The details provided by you for the product is under verification and will be uploaded on the website once verified. Also, a mail will be sent to you notifying the verification.<br>Below are the details uploaded by you.<br><div class='container' style='border: 1px solid black ; margin:10% auto; border-radius:10px'><div class='row row_mobile_notif'><div class='col-lg-6' style='text-align:center; margin-bottom: 50px;'><iframe class='iframe_mb_notif' src='https://drive.google.com/file/d/" +
                     ebook.file_id +
