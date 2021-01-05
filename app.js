@@ -2376,14 +2376,13 @@ app.put("/ebooks/:id", pdfupload.single("pdf_file"), async function (req, res) {
                                                     // Handle error
                                                     console.error(err);
                                                 } else {
-                                                    var newEbook = new Ebook();
-                                                    newEbook.title = req.body.title;
-                                                    newEbook.author = req.body.author;
-                                                    newEbook.is_display = false;
-                                                    newEbook.description = req.body.description;
-                                                    newEbook.file_id = fileId;
+                                                    req.newEbook.title = req.body.title;
+                                                    req.newEbook.author = req.body.author;
+                                                    req.newEbook.is_display = false;
+                                                    req.newEbook.description = req.body.description;
+                                                    req.newEbook.file_id = fileId;
                                                     Ebook.findByIdAndUpdate( req.params.id,
-                                                        newEbook,
+                                                        req.newEbook,
                                                         function (err, ebook) {
                                                             if (err)
                                                                 console.log(err);
@@ -2492,14 +2491,13 @@ app.put("/ebooks/:id", pdfupload.single("pdf_file"), async function (req, res) {
                                         console.error(err);
                                     } else {
                                         // All permissions inserted
-                                        var newEbook = new Ebook();
-                                        newEbook.title = req.body.title;
-                                        newEbook.author = req.body.author;
-                                        newEbook.is_display = false;
-                                        newEbook.description = req.body.description;
-                                        newEbook.file_id = fileId;
+                                        req.newEbook.title = req.body.title;
+                                        req.newEbook.author = req.body.author;
+                                        req.newEbook.is_display = false;
+                                        req.newEbook.description = req.body.description;
+                                        req.newEbook.file_id = fileId;
                                         Ebook.findByIdAndUpdate( req.params.id,
-                                            newEbook,
+                                            req.newEbook,
                                             function (err, ebook) {
                                                 if (err) console.log(err);
                                                 else {
@@ -2549,12 +2547,11 @@ app.put("/ebooks/:id", pdfupload.single("pdf_file"), async function (req, res) {
         });
     }
     else {
-        var newEbook = new Ebook();
-        newEbook.title = req.body.title;
-        newEbook.author = req.body.author;
-        newEbook.is_display = false;
-        newEbook.description = req.body.description;
-        Ebook.findByIdAndUpdate( req.params.id, newEbook, function(err, ebook) {
+        req.newEbook.title = req.body.title;
+        req.newEbook.author = req.body.author;
+        req.newEbook.is_display = false;
+        req.newEbook.description = req.body.description;
+        Ebook.findByIdAndUpdate( req.params.id, req.newEbook, function(err, ebook) {
             if (err) console.log(err);
             else {
                 var message =
