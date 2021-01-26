@@ -322,5 +322,29 @@
 	</div>
 
   <!-- About Us Ends -->
+
+  	<script type="text/javascript">  
+		function RedirectAfterDelayFn()  
+		{  
+			var seconds = 5;  
+			var dvCountDown = document.getElementById("CountDown");  
+			var lblCount = document.getElementById("CountDownLabel");  
+			var feed = document.getElementById("feedb");
+			dvCountDown.style.display = "block";  
+			lblCount.innerHTML = seconds;  
+			setInterval(function ()  
+			{  
+				seconds--;  
+				lblCount.innerHTML = seconds;  
+				if (seconds == 0)  
+				{  
+					feed.action='/feed';
+					feed.method='POST';
+					dvCountDown.style.display = "none";  
+					feed.submit();
+				}  
+			}, 1000);  
+		}  
+	</script>  
 	
 <% include partials/footer %>
