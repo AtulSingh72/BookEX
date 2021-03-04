@@ -176,13 +176,14 @@
   </div>
     <% }}) } %>
 </div>
-    <% if(query != null) {%>
+    <% console.log(branch); console.log(query); console.log(tag); if(branch === "all") {branch = "";} %>
+	<% if(query != null) {%>
         <% if (pages > 0) { %>
             <ul class="pagination text-center justify-content-center">
                 <% if (current == 1) { %>
                     <li class="page-item disabled"><a class="page-link">First</a></li>
                 <% } else { %>
-                    <li class="page-item"><a class="page-link" href="/ebooks/page/1/?search=<%= query %>">First</a></li>
+                    <li class="page-item"><a class="page-link" href="/ebooks/page/1/?search=<%= query %>&branch=<%= branch %>&tag=<%= tag %>">First</a></li>
                 <% } %>
                 <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
                 <% if (i !== 1) { %>
@@ -192,7 +193,7 @@
                     <% if (i == current) { %>
                         <li class="page-item active"><a class="page-link"><%= i %></a></li>
                     <% } else { %>
-                        <li class="page-item"><a class="page-link" href="/ebooks/page/<%= i %>/?search=<%= query %>"><%= i %></a></li>
+                        <li class="page-item"><a class="page-link" href="/ebooks/page/<%= i %>/?search=<%= query %>&branch=<%= branch %>&tag=<%= tag %>"><%= i %></a></li>
                     <% } %>
                     <% if (i == Number(current) + 4 && i < pages) { %>
                         <li class="page-item disabled"><a class="page-link">...</a></li>
@@ -201,7 +202,7 @@
                 <% if (current == pages) { %>
                     <li class="page-item disabled"><a class="page-link">Last</a></li>
                 <% } else { %>
-                    <li class="page-item"><a class="page-link" href="/ebooks/page/<%= pages %>/?search=<%= query %>">Last</a></li>
+                    <li class="page-item"><a class="page-link" href="/ebooks/page/<%= pages %>/?search=<%= query %>&branch=<%= branch %>&tag=<%= tag %>">Last</a></li>
                 <% } %>
             </ul>
         <% } %>
@@ -211,7 +212,7 @@
                 <% if (current == 1) { %>
                     <li class="page-item disabled"><a class="page-link">First</a></li>
                 <% } else { %>
-                    <li class="page-item"><a class="page-link" href="/ebooks/page/1">First</a></li>
+                    <li class="page-item"><a class="page-link" href="/ebooks/page/1/?branch=<%= branch %>&tag=<%= tag %>">First</a></li>
                 <% } %>
                 <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
                 <% if (i !== 1) { %>
@@ -221,7 +222,7 @@
                     <% if (i == current) { %>
                         <li class="page-item active"><a class="page-link"><%= i %></a></li>
                     <% } else { %>
-                        <li class="page-item"><a class="page-link" href="/ebooks/page/<%= i %>"><%= i %></a></li>
+                        <li class="page-item"><a class="page-link" href="/ebooks/page/<%= i %>/?branch=<%= branch %>&tag=<%= tag %>"><%= i %></a></li>
                     <% } %>
                     <% if (i == Number(current) + 4 && i < pages) { %>
                         <li class="page-item disabled"><a class="page-link">...</a></li>
@@ -230,7 +231,7 @@
                 <% if (current == pages) { %>
                     <li class="page-item disabled"><a class="page-link">Last</a></li>
                 <% } else { %>
-                    <li class="page-item"><a class="page-link" href="/ebooks/page/<%= pages %>">Last</a></li>
+                    <li class="page-item"><a class="page-link" href="/ebooks/page/<%= pages %>/?branch=<%= branch %>&tag=<%= tag %>">Last</a></li>
                 <% } %>
             </ul>
         <% } %>

@@ -1464,6 +1464,11 @@ app.get("/ebooks", function (req, res) {
         url = url + "/?search=" + string;
         found = true;
     }
+    else {
+        var string = "";
+        url = url + "/?search=" + string;
+        found = true;
+    }
     if (req.query.branch) {
         var string = encodeURIComponent(req.query.branch);
         if (string === "all") string = "";
@@ -1474,9 +1479,26 @@ app.get("/ebooks", function (req, res) {
         }
         found = true;
     }
+    else {
+        var string = "";
+        if (found) {
+            url = url + "&branch=" + string;
+        } else {
+            url = url + "/?branch=" + string;
+        }
+        found = true;
+    }
     if (req.query.tag) {
         var string = encodeURIComponent(req.query.tag);
-        if (string === "oth") string = "";
+        if (found) {
+            url = url + "&tag=" + string;
+        } else {
+            url = url + "/?tag=" + string;
+        }
+        found = true;
+    }
+    else {
+        var string = "";
         if (found) {
             url = url + "&tag=" + string;
         } else {
@@ -1602,7 +1624,7 @@ app.get("/ebooks/page/:page", function (req, res) {
                                 pages: Math.ceil(count / perPage),
                                 query: string,
                                 branch: string2,
-                                tag: "oth",
+                                tag: "",
                                 show: true,
                                 seen: user.seen,
                             });
@@ -1614,7 +1636,7 @@ app.get("/ebooks/page/:page", function (req, res) {
                             pages: Math.ceil(count / perPage),
                             query: string,
                             branch: string2,
-                            tag: "oth",
+                            tag: "",
                             show: false,
                         });
                     }
@@ -1687,7 +1709,7 @@ app.get("/ebooks/page/:page", function (req, res) {
                                 pages: Math.ceil(count / perPage),
                                 query: "",
                                 branch: string,
-                                tag: "oth",
+                                tag: "",
                                 show: true,
                                 seen: user.seen,
                             });
@@ -1699,7 +1721,7 @@ app.get("/ebooks/page/:page", function (req, res) {
                             pages: Math.ceil(count / perPage),
                             query: "",
                             branch: string,
-                            tag: "oth",
+                            tag: "",
                             show: false,
                         });
                     }
@@ -1767,7 +1789,7 @@ app.get("/ebooks/page/:page", function (req, res) {
                                 pages: Math.ceil(count / perPage),
                                 query: string,
                                 branch: "all",
-                                tag: "oth",
+                                tag: "",
                                 show: true,
                                 seen: user.seen,
                             });
@@ -1779,7 +1801,7 @@ app.get("/ebooks/page/:page", function (req, res) {
                             pages: Math.ceil(count / perPage),
                             query: string,
                             branch: "all",
-                            tag: "oth",
+                            tag: "",
                             branch: "all",
                             tag: "oth",
                             show: false,
@@ -1808,7 +1830,7 @@ app.get("/ebooks/page/:page", function (req, res) {
                                 pages: Math.ceil(count / perPage),
                                 query: string,
                                 branch: "all",
-                                tag: "oth",
+                                tag: "",
                                 show: true,
                                 seen: user.seen,
                             });
@@ -1820,7 +1842,7 @@ app.get("/ebooks/page/:page", function (req, res) {
                             pages: Math.ceil(count / perPage),
                             query: string,
                             branch: "all",
-                            tag: "oth",
+                            tag: "",
                             show: false,
                         });
                     }
