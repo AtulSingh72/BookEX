@@ -64,7 +64,7 @@
 				-> Description
 				-> Image -->
 			<div class="container screen" style="border: 1px solid black ; border-radius:10px">
-				<form style="padding:15px 35px;" action="/books" method="POST" enctype="multipart/form-data" name="form-book-fill">
+				<form style="padding:15px 35px;" action="/books" method="POST" enctype="multipart/form-data" name="form-book-fill" id="book-form">
 					 <div class="form-group row">
 						<label for="inputTitle" class="col-sm-2 col-form-label">Item Type</label>
 						<div class="col" style="text-align: center;">
@@ -337,6 +337,7 @@
 			branch_div.style.display = "flex";
 			tag_div.style.display = "none";
 			document['form-book-fill'].action = "/books";
+			document.getElementById('book-form').reset();
 		}
 		function pdf_fn()
 		{
@@ -353,6 +354,7 @@
 			branch_div.style.display = "flex";
 			tag_div.style.display = "flex";
 
+			document.getElementById('book-form').reset();
 			document['form-book-fill'].action = "/ebooks";
 		}
 		function misc_fn()
@@ -369,6 +371,7 @@
 			price.style.display = "flex";
 			branch_div.style.display = "none";
 			tag_div.style.display = "none";
+			document.getElementById('book-form').reset();
 
 			document['form-book-fill'].action = "/misc";
 		}
